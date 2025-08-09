@@ -450,6 +450,3 @@ Middleware'ler, modern web uygulamalarının omurgasıdır. Bu proje ile:
 4. Branch'i push edin (`git push origin feature/amazing-middleware`)
 5. Pull Request oluşturun
 
-## 📄 Lisans
-
-Bu proje MIT lisansı altında lisanslanmıştır.
