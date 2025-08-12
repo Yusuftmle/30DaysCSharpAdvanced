@@ -1,0 +1,22 @@
+
+syntax = "proto3"; //hangi versiyon
+option csharp_namespace = "grpcMessageServer";
+
+package greet;
+
+// Message service definition
+service Message {
+  // Sends a message response
+  rpc SendMessage (stream MessageRequest) returns (stream MessageResponse);
+}
+
+// Request message
+message MessageRequest {
+  string name = 1;
+  string message = 2;
+}
+
+// Response message
+message MessageResponse {
+  string message = 1;
+}
