@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Example_1
+namespace Code_Optimization_Example_1
 {
-    public class IcustomerActions
+    public interface ICustomerActions
     {
+        void ArchiveCustomer(Customer customer);
     }
 }
