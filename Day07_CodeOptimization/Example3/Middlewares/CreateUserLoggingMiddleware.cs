@@ -1,10 +1,11 @@
 ﻿using System.Text;
 using System.Text.Json;
 using Code_Optimization_Example_3_solution.Models;
+using Microsoft.AspNetCore.Mvc.Controllers;
 
 namespace Code_Optimization_Example_3_solution.Middlewares
 {
-    public class CreateUserLoggingMiddleware
+    public class CreateUserLoggingMiddleware:IMiddleware
     {
         private readonly ILogger<CreateUserLoggingMiddleware> logger;
 
@@ -13,19 +14,24 @@ namespace Code_Optimization_Example_3_solution.Middlewares
             this.logger = logger;
         }
 
-        public void Invoke(HttpContext context, RequestDelegate next)
+        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            if (context.Request.Path.Value.Contains("CreateUser"))
+            var controllerActionDescriptor = context.GetEndpoint()?.Metadata.GetMetadata<ControllerActionDescriptor>();
+            var controllerName = controllerActionDescriptor?.ControllerName;
+            var actionName = controllerActionDescriptor?.ActionName;
+
+            if (actionName.Equals("CreateUser", StringComparison.OrdinalIgnoreCase) && controllerName.Equals("User", StringComparison.OrdinalIgnoreCase))
             {
-                var req = context.Request;
+                context.Request.EnableBuffering();
+               
 
-                using var reader = new StreamReader(req.Body, Encoding.UTF8, true, 1024, true);
-                var bodyStr = reader.ReadToEnd();
-
-                var userViewModel = JsonSerializer.Deserialize<UserViewModel>(bodyStr);
+                var userViewModel = JsonSerializer.Deserialize<UserViewModel>(context.Request.Body);
 
                 logger.LogInformation($"User {userViewModel.FirstName} {userViewModel.LastName} is created.");
+                context.Request.Body.Position = 0;
             }
+            await next(context);
         }
+
     }
 }
